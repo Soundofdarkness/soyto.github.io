@@ -9,6 +9,7 @@ module.exports = function(grunt) {
   var $log              = require('../nodeApp/log');
   var $q                = require('q');
   var colors            = require('colors');
+  var o2x               = require('object-to-xml');
 
   require('../lib/javascript.extensions.js');
 
@@ -420,15 +421,31 @@ module.exports = function(grunt) {
   //Generates players database
   grunt.registerTask('create-players-database', function() {
     gameForgeServer.servers.forEach(function(server){
-      var serverCharactersFolder = charactersBaseFolder + server.name + '/';
 
-      //Retrieve characters array
-      var storedCharacters = _extractStoredCharacters(server);
+      var _charactersFolder = charactersBaseFolder + server['name'] + '/';
+      var _serverFiles = grunt.file.expand(baseFolder + '/Servers/*/' + server.name + '.json').sort(_sortServerFilesAsc);
 
-      //Store characterInfos
-      storedCharacters.forEach(function(character) {
-        $log.debug('Storing [%s:%s] characterInfo', colors.yellow(server.name), colors.cyan(character.names[character.names.length - 1].characterName));
-        grunt.file.write(serverCharactersFolder + character.characterID + '.json', JSON.stringify(character, null, ' '));
+      //Delete the character Folder (Bye bye data... :S)
+      grunt.file.delete(_charactersFolder);
+
+      //Start looping each serverFile
+      _serverFiles.forEach(function($$file){
+        var _data = grunt.file.readJSON($$file);
+        var _serverData = {
+          'serverName': server['name'],
+          'entries': {
+            'elyos': _data['elyos'],
+            'asmodians': _data['asmodians']
+          },
+          'date': $$file.split('/')[2]
+        };
+
+        $log.debug('Processing characters for [%s, %s]',
+            colors.yellow(server['name']),
+            colors.cyan(_serverData['date']));
+
+        //Tell to update characters
+        gameForgeServer.updateCharacters(_serverData, _charactersFolder, 'onlyNews');
       });
     });
   });
@@ -479,21 +496,6 @@ module.exports = function(grunt) {
       return _serversFullData;
     });
 
-  }
-
-  //Will extract stored characters
-  function _extractStoredCharacters(server) {
-
-    var serverPreviousDates = grunt.file.expand(baseFolder + '/Servers/*/' + server.name + '.json').select(function($$fileName) {
-          var _data = grunt.file.readJSON($$fileName);
-          return {
-            'date': new Date($$fileName.split('/')[2]),
-            'characters': _data['elyos'].concat(_data['asmodians'])
-          };
-        })
-        .sort(function(a, b){ return a['date'] - b['date']; });
-
-    return gameForgeServer.generateCharacterInfo(serverPreviousDates);
   }
 
   //Extract per server playersInfo
@@ -581,19 +583,20 @@ module.exports = function(grunt) {
       grunt.file.expand($$folderName + '/*').forEach(function($$characterFileName) {
         var _id = $$characterFileName.split('/')[4].split('.')[0];
         var _data = grunt.file.readJSON($$characterFileName);
-        var _characterName = _data['characterName'];
 
         _wholeData.push({
           'id': _id,
-          'characterName': _characterName,
-          'serverName': _serverName
+          'characterName': _data['characterName'],
+          'characterClassID': _data['characterClassID'],
+          'characterRaceID': _data['raceID'],
+          'characterPosition': _data['position'],
+          'characterSoldierRankID': _data['soldierRankID'],
+          'serverName': _serverName,
+          'lastStatus': _data['status'][_data['status'].length -1]['date']
         });
       });
 
     });
-
-    $log.debug('Sorting data');
-
     _wholeData.sort(function(a, b){
       return a['characterName'].localeCompare(b['characterName']);
     });
@@ -601,5 +604,52 @@ module.exports = function(grunt) {
     $log.debug('Storing data on %scharactersSheet.json', charactersBaseFolder);
 
     grunt.file.write(charactersBaseFolder + 'charactersSheet.json', JSON.stringify(_wholeData));
+
+    $log.debug('Storing data on %scharactersSheet.xml', charactersBaseFolder);
+
+    //Change dates on wholeDatas
+    _wholeData.forEach(function($$entry){
+      var _d = new Date($$entry['lastStatus']);
+      $$entry['lastStatus'] = parseInt(_d.getTime()) / 1000;
+    });
+
+    grunt.file.write(charactersBaseFolder + 'charactersSheet.xml', o2x({
+      '?xml version=\"1.0\" encoding=\"iso-8859-1\"?' : null,
+      'characters': {
+        'character': _wholeData
+      }
+    }));
+  }
+
+  //Sorsts server files in ascendant way...
+  function _sortServerFilesAsc(a, b) {
+    var _aSplit = a.split('/')[2].split('-');
+    var _bSplit = b.split('/')[2].split('-');
+
+    var _dateA = {
+      'day': parseInt(_aSplit[1]),
+      'month': parseInt(_aSplit[0]),
+      'year': parseInt(_aSplit[2])
+    };
+
+    var _dateB = {
+      'day': parseInt(_bSplit[1]),
+      'month': parseInt(_bSplit[0]),
+      'year': parseInt(_bSplit[2])
+    };
+
+    if(_dateA['year'] == _dateB['year']) {
+
+      if(_dateA['month'] == _dateB['month']) {
+        return _dateA['day'] - _dateB['day'];
+      }
+      else {
+        return _dateA['month'] - _dateB['month'];
+      }
+
+    }
+    else {
+      return _dateA['year'] - _dateB['year'];
+    }
   }
 };

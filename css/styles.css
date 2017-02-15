@@ -9,8 +9,17 @@ license: MIT
 author: bootply.com
 */
 
-@import url(http://fonts.googleapis.com/css?family=Roboto:400);
-body{ background-color:#e0e0e0; -webkit-font-smoothing: antialiased; font: normal 14px Roboto,arial,sans-serif; }
+/* Fonts:
+ - Roboto:400
+ - Josefin+Sans:600
+ */
+@import url(http://fonts.googleapis.com/css?family=Josefin+Sans:600);
+body{
+    background-color:#e0e0e0;
+    -webkit-font-smoothing: antialiased;
+    font-size: 14px;
+    font-family: 'Josefin Sans',arial,sans-serif;
+}
 
 /* Header */
 #header {
@@ -110,6 +119,32 @@ textarea { resize: none; outline: 0; }
  color: #555;
 }
 
+/* Panel search
+ * ------------------------------------------------------------------------------------------------------------------ */
+.panel-search{}
+.panel-search .list-group .list-group-item{
+  padding-bottom: 0;
+  padding-top: 0;
+}
+.panel-search .list-group .list-group-item .list-group-item-heading{
+  margin-bottom: 0;
+}
+.panel-search .list-group .list-group-item .list-group-item-heading h4{
+  color: #337ab7;
+  margin-bottom: 0;
+}
+.panel-search .list-group .list-group-item.active .list-group-item-heading h4{
+  color: #c7ddef;
+}
+.panel-search .list-group .list-group-item .list-group-item-heading .lead{
+  font-size: 0.8em;
+  margin-bottom: 10px;
+}
+.panel-search .list-group .list-group-item .list-group-item-text{
+  font-size: 0.8em;
+  margin-top: 10px;
+}
+
 /* Panel search mini...
  * ------------------------------------------------------------------------------------------------------------------ */
 .panel-search-mini {
@@ -201,6 +236,6 @@ textarea { resize: none; outline: 0; }
  }
 }
 
-#main { padding-top:120px; }
+#main { padding-top:70px; }
 /* Loading bar height */
 #loading-bar .bar{height: 5px;}

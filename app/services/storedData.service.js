@@ -13,6 +13,7 @@
     var $log = $hs.$instantiate('$log');
     var $http = $hs.$instantiate('$http');
     var $window = $hs.$instantiate('$window');
+    var $timeout = $hs.$instantiate('$timeout');
     var characterSocialService = $hs.$instantiate('characterSocialService');
 
     var _cacheServerData = [];
@@ -31,6 +32,8 @@
       {'serverName': 'Urtem', 'characterID': 1508483}, //Nacka
       {'serverName': 'Hellion', 'characterID': 495423}, //Chetitos
       {'serverName': 'Hyperion', 'characterID': 11600}, //Raynee
+      {'serverName': 'Antriksha', 'characterID': 863503}, //Nukey
+      {'serverName': 'Antriksha', 'characterID': 642109}, //Yost
     ];
 
     //Who asked to remove his old guild names
@@ -38,6 +41,7 @@
       {'serverName': 'Hellion', 'characterID': 495423}, //Chetitos
       {'serverName': 'Deyla', 'characterID': 1266763}, //Kaijur
       {'serverName': 'Hyperion', 'characterID': 11600}, //Raynee
+      {'serverName': 'Antriksha', 'characterID': 863503}, //Nukey
     ];
 
     //Wich servers
@@ -151,15 +155,43 @@
         return $q.resolve(_cachedItem);
       }
 
-      return $q.likeNormal($http({
+      return $http({
         'url': host + 'data/Servers/Characters/' + serverName + '/' + characterID + '.json',
         'method': 'GET'
+      }).then(function(response){
+
+        response['data']['status'].forEach(function($$item){
+          $$item['date'] = _normalizeDateString($$item['date']);
+        });
+
+        response['data']['names'].forEach(function($$item){
+          $$item['date'] = _normalizeDateString($$item['date']);
+        });
+
+        response['data']['guilds'].forEach(function($$item){
+          $$item['date'] = _normalizeDateString($$item['date']);
+        });
+
+        return _processCharacterInfoData(serverName, response['data']).then(function($$character){
+          _cacheCharacterInfo.push($$character);
+          return $$character;
+        });
+      });
+
+      //TODO: Replaced cuz dont works on firefox ^^
+      /*return $q.likeNormal($http({
+        'url': host + 'data/Servers/Characters/' + serverName + '/' + characterID + '.json',
+        'method': 'GET'
+      }).then(function(arg1, arg2, arg3){
+        console.log(arg1);
+        console.log(arg2);
+        console.log(arg3);
       })).then(function($data) {
         return _processCharacterInfoData(serverName, $data).then(function($$character){
           _cacheCharacterInfo.push($$character);
           return $$character;
         });
-      });
+      });*/
     };
 
     //Retrieves what is the last server data
@@ -209,11 +241,21 @@
     function _getCharacterCheatSheet() {
 
       if(_cacheCharacterCheatSheet !== null) {
-        return $q.resolve(_cacheCharacterCheatSheet);
+        var $$q = $q.defer();
+        $timeout(function(){
+          $$q.resolve(_cacheCharacterCheatSheet);
+        });
+        return $$q.promise;
       }
 
       var _url = host + '/data/Servers/Characters/charactersSheet.json';
       return $q.likeNormal($http.get(_url)).then(function($wholeData){
+        $wholeData.forEach(function($$entry){
+          $$entry['characterClass'] = $this.getCharacterClass($$entry['characterClassID']);
+          $$entry['soldierRank'] = $this.getCharacterRank($$entry['characterSoldierRankID']);
+          $$entry['raceName'] = $$entry['raceID'] == 1 ? 'Asmodian' : 'Elyos';
+        });
+
         _cacheCharacterCheatSheet = $wholeData;
         return $wholeData;
       });
@@ -221,7 +263,7 @@
 
     //Process character info data
     function _processCharacterInfoData(serverName, characterInfoData) {
-
+      
       //Create result
       var _result = {
         'serverName': serverName,
@@ -295,6 +337,19 @@
           return b[propName].getTime() - a[propName].getTime();
         };
       }
+    }
+
+    //Normalize the date
+    function _normalizeDateString(dateString) {
+      var _date = new Date(dateString);
+
+      if(!isNaN(_date.getTime())) {
+        return _date;
+      }
+
+      var _splitDate = dateString.split('-');
+
+      return new Date(parseInt(_splitDate[2]), parseInt(_splitDate[0]) - 1, parseInt(_splitDate[1]));
     }
 
   }
