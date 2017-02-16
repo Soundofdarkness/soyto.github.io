@@ -1381,6 +1381,237 @@
 
 })(angular);
 
+window.storedDates = [
+ '02-03-2016',
+ '02-04-2016',
+ '02-05-2016',
+ '02-07-2016',
+ '02-08-2016',
+ '02-09-2016',
+ '02-10-2016',
+ '02-11-2016',
+ '02-13-2016',
+ '02-14-2016',
+ '02-15-2016',
+ '02-16-2016',
+ '02-17-2016',
+ '02-18-2016',
+ '02-19-2016',
+ '02-21-2016',
+ '02-22-2016',
+ '02-23-2016',
+ '02-24-2016',
+ '02-25-2016',
+ '02-26-2016',
+ '02-28-2016',
+ '02-29-2016',
+ '03-01-2016',
+ '03-02-2016',
+ '03-03-2016',
+ '03-04-2016',
+ '03-05-2016',
+ '03-06-2016',
+ '03-07-2016',
+ '03-08-2016',
+ '03-09-2016',
+ '03-10-2016',
+ '03-13-2016',
+ '03-14-2016',
+ '03-16-2016',
+ '03-17-2016',
+ '03-18-2016',
+ '03-20-2016',
+ '03-22-2016',
+ '03-24-2016',
+ '03-25-2016',
+ '03-27-2016',
+ '03-28-2016',
+ '03-29-2016',
+ '03-30-2016',
+ '03-31-2016',
+ '04-02-2016',
+ '04-03-2016',
+ '04-04-2016',
+ '04-05-2016',
+ '04-06-2016',
+ '04-07-2016',
+ '04-08-2016',
+ '04-09-2016',
+ '04-10-2016',
+ '04-11-2016',
+ '04-12-2016',
+ '04-13-2016',
+ '04-14-2016',
+ '04-15-2016',
+ '04-16-2016',
+ '04-17-2016',
+ '04-19-2016',
+ '04-20-2016',
+ '04-21-2016',
+ '04-22-2016',
+ '04-23-2016',
+ '04-24-2016',
+ '04-25-2016',
+ '04-27-2016',
+ '04-28-2016',
+ '04-29-2016',
+ '04-30-2016',
+ '05-01-2016',
+ '05-03-2016',
+ '05-04-2016',
+ '05-05-2016',
+ '05-08-2016',
+ '05-09-2016',
+ '05-10-2016',
+ '05-11-2016',
+ '05-13-2016',
+ '05-14-2016',
+ '05-15-2016',
+ '05-17-2016',
+ '05-18-2016',
+ '05-19-2016',
+ '05-20-2016',
+ '05-21-2016',
+ '05-23-2016',
+ '05-24-2016',
+ '05-25-2016',
+ '05-27-2016',
+ '05-29-2016',
+ '05-30-2016',
+ '05-31-2016',
+ '06-01-2016',
+ '06-02-2016',
+ '06-04-2016',
+ '06-06-2016',
+ '06-07-2016',
+ '06-09-2016',
+ '06-11-2016',
+ '06-12-2016',
+ '06-13-2016',
+ '06-15-2016',
+ '06-17-2016',
+ '06-18-2016',
+ '06-20-2016',
+ '06-22-2016',
+ '06-24-2016',
+ '06-28-2016',
+ '06-29-2016',
+ '06-30-2016',
+ '07-01-2016',
+ '07-04-2016',
+ '07-05-2016',
+ '07-07-2016',
+ '07-10-2016',
+ '07-11-2016',
+ '07-12-2016',
+ '07-13-2016',
+ '07-15-2016',
+ '07-18-2016',
+ '07-19-2016',
+ '07-20-2016',
+ '07-21-2016',
+ '07-22-2016',
+ '07-23-2016',
+ '07-24-2016',
+ '07-27-2016',
+ '07-28-2016',
+ '07-29-2016',
+ '08-02-2016',
+ '08-03-2016',
+ '08-04-2016',
+ '08-06-2016',
+ '08-09-2016',
+ '08-12-2016',
+ '08-15-2016',
+ '08-18-2016',
+ '08-19-2016',
+ '08-20-2016',
+ '08-21-2016',
+ '08-24-2016',
+ '08-25-2016',
+ '08-26-2016',
+ '08-30-2016',
+ '09-01-2016',
+ '09-05-2016',
+ '09-06-2016',
+ '09-10-2016',
+ '09-12-2016',
+ '09-16-2016',
+ '09-17-2016',
+ '09-18-2016',
+ '09-19-2016',
+ '09-22-2016',
+ '09-23-2016',
+ '09-26-2016',
+ '09-27-2016',
+ '09-28-2016',
+ '09-29-2016',
+ '09-30-2016',
+ '10-03-2016',
+ '10-04-2016',
+ '10-06-2016',
+ '10-10-2016',
+ '10-17-2016',
+ '10-18-2016',
+ '10-20-2016',
+ '10-21-2016',
+ '10-25-2016',
+ '10-26-2016',
+ '10-27-2016',
+ '10-28-2016',
+ '10-30-2016',
+ '10-31-2016',
+ '11-02-2016',
+ '11-03-2016',
+ '11-07-2016',
+ '11-08-2016',
+ '11-12-2016',
+ '11-15-2016',
+ '11-17-2016',
+ '11-18-2016',
+ '11-20-2016',
+ '11-23-2016',
+ '11-25-2016',
+ '11-29-2016',
+ '12-01-2016',
+ '12-05-2016',
+ '12-07-2016',
+ '12-10-2016',
+ '12-11-2016',
+ '12-12-2016',
+ '12-13-2016',
+ '12-19-2016',
+ '12-22-2016',
+ '12-23-2016',
+ '12-24-2016',
+ '12-28-2016',
+ '12-30-2016',
+ '01-03-2017',
+ '01-05-2017',
+ '01-08-2017',
+ '01-09-2017',
+ '01-10-2017',
+ '01-11-2017',
+ '01-12-2017',
+ '01-13-2017',
+ '01-14-2017',
+ '01-15-2017',
+ '01-16-2017',
+ '01-17-2017',
+ '01-19-2017',
+ '01-20-2017',
+ '01-21-2017',
+ '01-22-2017',
+ '01-24-2017',
+ '01-25-2017',
+ '01-26-2017',
+ '01-27-2017',
+ '01-30-2017',
+ '01-31-2017',
+ '02-01-2017',
+ '02-02-2017'
+];
+
 (function(ng){
   'use strict';
 
@@ -1602,6 +1833,93 @@
 
 })(angular);
 
+
+(function(ng) {
+  'use strict';
+
+  var SERVICE_NAME = 'helperService.$q';
+
+  var MAIN_TIME_TRIGGER = 1000;
+
+  ng.module('mainApp').service(SERVICE_NAME, ['$injector', _fn]);
+
+  function _fn($injector) {
+
+    var $this = this;
+    var $q = $injector.get('$q');
+    var $timeout =  $injector.get('$timeout');
+    var $parent = null;
+    var _timeouts = {};
+
+    //Sets wich is current parent
+    $this.$setParent = function(parent) {
+      $parent = parent;
+      return $this;
+    };
+
+    $this.$q = $q;
+
+    //Changes normal promises to be like $http
+    $this.$q.likeHttp = function ($$q) {
+
+      //If is a deferred
+      if ($$q.promise) {
+        $$q.promise.success = function (callback) {
+          $$q.promise.then(callback);
+          return $$q.promise;
+        };
+        $$q.promise.error = function (callback) {
+          $$q.promise.catch(callback);
+          return $$q.promise;
+        };
+        return $$q;
+      }
+
+      //If is a promise
+      if ($$q.then) {
+        var _$$q = $this.likeHttp($q.defer());
+
+        $$q.then(_$$q.resolve);
+        $$q.catch(_$$q.catch);
+
+        return _$$q.promise;
+      }
+    };
+
+    //Changes $http promises to work like normals
+    $this.$q.likeNormal = function (httpPromise) {
+      var $$q = $q.defer();
+      httpPromise.success($$q.resolve).error($$q.reject);
+      return $$q.promise;
+    };
+
+    //Executes a time trigger
+    $this.$q.timeTrigger = function(name, fn, time) {
+
+      //If not time
+      if(!time) {
+        time = MAIN_TIME_TRIGGER;
+      }
+
+      //Cancel previous timeout
+      if(_timeouts[name]) {
+        $timeout.cancel(_timeouts[name]);
+      }
+
+      _timeouts[name] = $timeout(fn, time);
+
+      return _timeouts[name];
+    };
+
+    //Cancels a time trigger
+    $this.$q.cancelTimeTrigger = function(name) {
+      if(_timeouts[name]) {
+        $timeout.cancel(_timeouts[name]);
+      }
+    };
+
+  }
+})(angular);
 
 (function(ng){
   'use strict';
@@ -2004,91 +2322,4 @@
     };
   }
 
-})(angular);
-
-(function(ng) {
-  'use strict';
-
-  var SERVICE_NAME = 'helperService.$q';
-
-  var MAIN_TIME_TRIGGER = 1000;
-
-  ng.module('mainApp').service(SERVICE_NAME, ['$injector', _fn]);
-
-  function _fn($injector) {
-
-    var $this = this;
-    var $q = $injector.get('$q');
-    var $timeout =  $injector.get('$timeout');
-    var $parent = null;
-    var _timeouts = {};
-
-    //Sets wich is current parent
-    $this.$setParent = function(parent) {
-      $parent = parent;
-      return $this;
-    };
-
-    $this.$q = $q;
-
-    //Changes normal promises to be like $http
-    $this.$q.likeHttp = function ($$q) {
-
-      //If is a deferred
-      if ($$q.promise) {
-        $$q.promise.success = function (callback) {
-          $$q.promise.then(callback);
-          return $$q.promise;
-        };
-        $$q.promise.error = function (callback) {
-          $$q.promise.catch(callback);
-          return $$q.promise;
-        };
-        return $$q;
-      }
-
-      //If is a promise
-      if ($$q.then) {
-        var _$$q = $this.likeHttp($q.defer());
-
-        $$q.then(_$$q.resolve);
-        $$q.catch(_$$q.catch);
-
-        return _$$q.promise;
-      }
-    };
-
-    //Changes $http promises to work like normals
-    $this.$q.likeNormal = function (httpPromise) {
-      var $$q = $q.defer();
-      httpPromise.success($$q.resolve).error($$q.reject);
-      return $$q.promise;
-    };
-
-    //Executes a time trigger
-    $this.$q.timeTrigger = function(name, fn, time) {
-
-      //If not time
-      if(!time) {
-        time = MAIN_TIME_TRIGGER;
-      }
-
-      //Cancel previous timeout
-      if(_timeouts[name]) {
-        $timeout.cancel(_timeouts[name]);
-      }
-
-      _timeouts[name] = $timeout(fn, time);
-
-      return _timeouts[name];
-    };
-
-    //Cancels a time trigger
-    $this.$q.cancelTimeTrigger = function(name) {
-      if(_timeouts[name]) {
-        $timeout.cancel(_timeouts[name]);
-      }
-    };
-
-  }
 })(angular);

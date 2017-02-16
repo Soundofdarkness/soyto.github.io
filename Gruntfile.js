@@ -7,13 +7,12 @@ module.exports = function(grunt) {
   require('./nodeApp/application.tasks.js')(grunt);
   require('./nodeApp/gameforge.server.tasks')(grunt);
 
-  var $q = require('q');
   var request = require('request');
   var semver = require('semver');
   var sh = require('shelljs');
   var colors = require('colors');
   var config = require('./nodeApp/config.js');
-  var $log = require('./nodeApp/log.js');
+  var $log = require('./nodeApp/utils/log.js');
 
   var licenseTxt = grunt.file.read('LICENSE.TXT');
 
@@ -97,5 +96,30 @@ module.exports = function(grunt) {
     grunt.task.run('jshint:app');
     grunt.task.run('concat:app');
     grunt.task.run('uglify:app');
+  });
+
+
+  grunt.registerTask('test', function(){
+    var _done = this.async();
+
+    var $filesDBService = require('./nodeApp/services/FilesDB.service.js');
+
+    $filesDBService.getAllServerFilesStructured().forEach(function($$server){
+      $$server['dates'].forEach(function($$date){
+        $log.debug('[%s] date -> %s', $$server['name'], $$date['date']);
+      });
+    });
+
+
+    /*var $dbServer = require('./nodeApp/services/DB.service.js');
+
+    $dbServer.connect().then(function(database){
+      $log.debug('succesfully connected');
+      $dbServer.close();
+
+    }).catch(function(error){
+      $log.debug('could not connect to database -> ', error);
+    }).finally(_done);*/
+
   });
 };

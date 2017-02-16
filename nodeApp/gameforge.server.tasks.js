@@ -6,7 +6,7 @@ module.exports = function(grunt) {
   var blog              = require('../nodeApp/blog');
   var config            = require('../nodeApp/config.js');
   var moment            = require('moment');
-  var $log              = require('../nodeApp/log');
+  var $log              = require('../nodeApp/utils/log.js');
   var $q                = require('q');
   var colors            = require('colors');
   var o2x               = require('object-to-xml');
@@ -226,7 +226,7 @@ module.exports = function(grunt) {
 
     //8th step, generate character sheet
     sp = sp.then(function(){
-      _createPlayersCheatSheet()
+      _createPlayersCheatSheet();
     });
 
     //Confirm all

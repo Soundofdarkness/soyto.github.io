@@ -6,7 +6,7 @@ module.exports = new function() {
   var NUM_PAGES_PER_SERVER = 20;
 
   var $q        = require('q');
-  var $log      = require('../nodeApp/log');
+  var $log      = require('../nodeApp/utils/log.js');
   var request   = require('request');
   var colors    = require('colors');
   var extend    = require('util')._extend;
@@ -419,7 +419,7 @@ module.exports = new function() {
         //We only store last 100 status...
         if(_storedCharacter['status'].length > 100) {
           var _statusLength = _storedCharacter['status'].length;
-          _storedCharacter['status'].splice(0, _statusLength - 50)
+          _storedCharacter['status'].splice(0, _statusLength - 50);
         }
 
         //Has changed name?
