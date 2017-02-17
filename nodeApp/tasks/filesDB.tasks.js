@@ -15,6 +15,7 @@ module.exports = function(grunt){
     $dbService.connect().then(function(){
 
       var _serverModel = $dbService['models']['Server'];
+      var _characterModel = $dbService['models']['Character'];
 
       var _servers = $filesDB.getAllServerFilesStructured();
 
@@ -27,10 +28,16 @@ module.exports = function(grunt){
         $$server['dates'].forEach(function($$date, $index) {
           var _date = $$date['date'];
 
+          var _startTime = null;
+
+          $$q = $$q.then(function(){
+            _startTime = (new Date()).getTime();
+          });
+
+          //Store server
           $$q = $$q.then(function() {
-            var _timeControl = (new Date()).getTime();
             var _wholeData = grunt.file.readJSON($$date['file']);
-            var _characters = _wholeData['asmodians'].concat(_wholeData['elyos']).select(_transformCharacter);
+            var _characters = _wholeData['asmodians'].concat(_wholeData['elyos']).select(_transformCharacterForRanking);
 
             //Sort characters
             _characters.sort(function(a, b){
@@ -80,13 +87,82 @@ module.exports = function(grunt){
                 _prevDoc = $$dbDocument;
 
                 //Save oldDocument
-                return (_oldDoc != null ? _oldDoc.save() : Promise.resolve()).then(function(){
-                  $log.debug('[%s-%s] Document created [%s:%s] in %sms',
-                      $index + 1, $$server['dates'].length,
-                      $$dbDocument['name'], $$dbDocument['date'], (new Date()).getTime() - _timeControl);
+                return (_oldDoc != null ? _oldDoc.save() : Promise.resolve($$dbDocument)).then(function(){
+                  return $$dbDocument;
                 });
               });
             });
+          });
+
+          //Now store characters on the server
+          $$q = $$q.then(function($$serverDocument){
+            var _$q = Promise.resolve();
+
+            $$serverDocument['characters'].forEach(function($$character){
+              _$q = _$q.then(function(){
+
+                //Look if this character exists
+                return _characterModel.findOne({'ID': $$character['ID'], 'server': $$serverDocument['name']}).exec().then(function($$dbCharacter){
+
+                  //Character doesnt exists? create it
+                  if($$dbCharacter == null) {
+                    /* jshint-W055 */
+                    $$dbCharacter = new _characterModel({
+                      'ID': $$character['ID'],
+                      'server': $$serverDocument['name'],
+                      'name': $$character['name'],
+
+                      'guild': {
+                        'name': $$character['guild']['name'],
+                        'ID': $$character['guild']['ID'],
+                      },
+
+                      'raceID': $$character['raceID'],
+                      'classID': $$character['classID'],
+
+                      'gloryPoints': $$character['gloryPoints'],
+                      'position': $$character['position'],
+                      'rankID': $$character['rankID'],
+                      'positionChange': $$character['positionChange'],
+                      'gloryPointChange': $$character['gloryPointChange'],
+
+                      'guilds': [{
+                        'date': $$serverDocument['date'],
+                        'ID': $$character['guild']['ID'],
+                        'name': $$character['guild']['name']
+                      }],
+                      'names': [{
+                        'date': $$serverDocument['date'],
+                        'name': $$character['name']
+                      }],
+                    });
+                    /* jshint+W055 */
+                  }
+
+                  //Was changed his name?
+                  _processCharacterNameChanges($$dbCharacter, $$character, $$serverDocument['date']);
+
+                  //Was changed his guild?
+                  _processCharacterGuildChange($$dbCharacter, $$character, $$serverDocument['date']);
+
+                  //Process character new status
+                  _processCharacterNewStatus($$dbCharacter, $$character, $$serverDocument['date']);
+
+
+                  return $$dbCharacter.save();
+                });
+              });
+            });
+
+            return _$q;
+          });
+
+          $$q = $$q.then(function(){
+            var _now = (new Date()).getTime();
+            var _time = _now - _startTime;
+
+
+            $log.debug('Stored %s:%s on %sms', _serverName, _date, _time);
           });
         });
       });
@@ -102,19 +178,12 @@ module.exports = function(grunt){
     }).finally(_done);
 
     //Trasnforms a character
-    function _transformCharacter(character) {
-      return {
+    function _transformCharacterForRanking(character) {
+      var _result = {
         'ID': character['characterID'],
         'name': character['characterName'],
 
-        'guild': {
-          'name': character['guildName'],
-          'ID': character['guildID'],
-          'level': character['guildLevel'],
-          'masterName': character['masterName'],
-          'memberCount': character['memberCount'],
-          'contributionPoints': character['contributionPoint'],
-        },
+        'guild': null,
 
         'raceID': character['raceID'],
         'classID': character['characterClassID'],
@@ -126,6 +195,21 @@ module.exports = function(grunt){
         'positionChange': null,
         'gloryPointChange': null
       };
+
+      //Character has guild?
+      if(character['guildName'] && character['guildID']) {
+        _result['guild'] = {
+          'name': character['guildName'],
+          'ID': character['guildID'],
+          'level': character['guildLevel'],
+          'masterName': character['masterName'],
+          'memberCount': character['memberCount'],
+          'contributionPoints': character['contributionPoint'],
+        };
+      }
+
+
+      return _result;
     }
 
     //Calculates character progression for current schema
@@ -143,8 +227,8 @@ module.exports = function(grunt){
 
     //Retrieve top server scorers
     function _getTopScorers(currentSchema) {
-      var _asmodians = currentSchema['characters'].where(function(x){ return x['raceID'] == 1; });
-      var _elyos = currentSchema['characters'].where(function(x){ return x['raceID'] == 0; });
+      var _asmodians = currentSchema['characters'].where(function(x){ return x['raceID'] === 1; });
+      var _elyos = currentSchema['characters'].where(function(x){ return x['raceID'] === 0; });
 
       var _topAsmodianGpChange = _asmodians.max(function(x){ return x['gloryPointChange']; });
       var _topAsmodianPositionChange = _asmodians.max(function(x){ return x['positionChange']; });
@@ -179,6 +263,108 @@ module.exports = function(grunt){
           }
         }
       };
+    }
+
+    //Process if character has a name change
+    function _processCharacterNameChanges(dbCharacter, newCharacter, currentDate) {
+      if(dbCharacter['name'] != newCharacter['name']) {
+        dbCharacter['name'] = newCharacter['name'];
+
+        dbCharacter['names'].unshift({
+          'date': currentDate,
+          'name': newCharacter['name']
+        });
+      }
+    }
+
+    //Porcess if character has new guild
+    function _processCharacterGuildChange(dbCharacter, newCharacter, currentDate){
+
+      var _newGuildID = newCharacter['guild'] == null ? null : newCharacter['guild']['ID'];
+      var _oldGuildID = dbCharacter['guild'] == null ? null : dbCharacter['guild']['ID'];
+
+      if(_newGuildID == _oldGuildID) { return; }
+
+
+      //Set up the new guild
+      if(_newGuildID != null) {
+        dbCharacter['guild'] = {
+          'name': newCharacter['guild']['name'],
+          'ID': newCharacter['guild']['ID']
+        };
+      }
+      else {
+        dbCharacter['guild'] = null;
+      }
+
+      //Has an entry for today?
+      var _guildEntry = dbCharacter['guilds'].first(function(x){ return x['date'] == currentDate; });
+
+      //If we had an entry, update it
+      if(_guildEntry != null) {
+        if(_newGuildID != null) {
+          _guildEntry['ID'] = newCharacter['guild']['ID'];
+          _guildEntry['name'] = newCharacter['guild']['name'];
+        }
+        else {
+          _guildEntry['ID'] = null;
+          _guildEntry['name'] = null;
+        }
+      }
+      else { //Create the new entry
+
+        if(_newGuildID != null) {
+          _guildEntry = {
+            'ID': newCharacter['guild']['ID'],
+            'name': newCharacter['guild']['name'],
+            'date': currentDate
+          };
+        }
+        else {
+          _guildEntry = {
+            'ID': newCharacter['guild']['ID'],
+            'name': newCharacter['guild']['name'],
+            'date': currentDate
+          };
+        }
+
+        dbCharacter['guilds'].unshift(_guildEntry);
+      }
+
+    }
+
+    //Process character new status...
+    function _processCharacterNewStatus(dbCharacter, newCharacter, currentDate) {
+
+      var _status = dbCharacter['status'].first(function(x){ return x['date'] == currentDate; });
+
+      //If we have an entry, just update it
+      if(_status != null) {
+        _status['gloryPoints'] = newCharacter['gloryPoints'];
+        _status['position'] = newCharacter['position'];
+        _status['rankID'] = newCharacter['rankID'];
+        _status['positionChange'] = newCharacter['positionChange'];
+        _status['gloryPointChange'] = newCharacter['gloryPointChange'];
+      }
+      else {
+        _status = {
+          'date': currentDate,
+          'gloryPoints': newCharacter['gloryPoints'],
+          'position': newCharacter['position'],
+          'rankID': newCharacter['rankID'],
+          'positionChange': newCharacter['positionChange'],
+          'gloryPointChange': newCharacter['gloryPointChange'],
+        };
+
+        dbCharacter['status'].unshift(_status);
+      }
+
+      //Update dbCharacter profile status
+      dbCharacter['gloryPoints'] = newCharacter['gloryPoints'];
+      dbCharacter['position'] = newCharacter['position'];
+      dbCharacter['rankID'] = newCharacter['rankID'];
+      dbCharacter['positionChange'] = newCharacter['positionChange'];
+      dbCharacter['gloryPointChange'] = newCharacter['gloryPointChange'];
     }
   });
 
