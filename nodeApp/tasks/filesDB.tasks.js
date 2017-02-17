@@ -24,13 +24,22 @@ module.exports = function(grunt){
         var _serverName = $$server['name'];
         var _prevDoc = null;
 
-        $$server['dates'].forEach(function($$date) {
+        $$server['dates'].forEach(function($$date, $index) {
           var _date = $$date['date'];
 
           $$q = $$q.then(function() {
             var _timeControl = (new Date()).getTime();
             var _wholeData = grunt.file.readJSON($$date['file']);
             var _characters = _wholeData['asmodians'].concat(_wholeData['elyos']).select(_transformCharacter);
+
+            //Sort characters
+            _characters.sort(function(a, b){
+              if(a['position'] != b['position']) {
+                return a['position'] - b['position'];
+              }
+
+              return b['raceID'] - a['raceID'];
+            });
 
             //Extract entry from database
             return _serverModel.findOne({'name': _serverName, 'date': _date}).exec().then(function($$document) {
@@ -63,15 +72,18 @@ module.exports = function(grunt){
                 _getTopScorers($$document);
               }
 
-
+              //Save document
               return $$document.save().then(function($$dbDocument){
 
-
+                //Store oldDocument
                 var _oldDoc = _prevDoc;
                 _prevDoc = $$dbDocument;
 
+                //Save oldDocument
                 return (_oldDoc != null ? _oldDoc.save() : Promise.resolve()).then(function(){
-                  $log.debug('Document created [%s:%s] in %sms', $$dbDocument['name'], $$dbDocument['date'], (new Date()).getTime() - _timeControl);
+                  $log.debug('[%s-%s] Document created [%s:%s] in %sms',
+                      $index + 1, $$server['dates'].length,
+                      $$dbDocument['name'], $$dbDocument['date'], (new Date()).getTime() - _timeControl);
                 });
               });
             });
