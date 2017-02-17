@@ -22,7 +22,7 @@
 
     'mongo': {
       'connectionString': 'mongodb://localhost:27017/soyto',
-      'mongoLoggerLevel': 'error'
+      'debug': false
     }
   };
 

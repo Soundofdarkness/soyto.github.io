@@ -11,6 +11,16 @@
 
   function FilesDBService(){
     var $this = this;
+
+    /*  --------------------------------------  FIELDS  ------------------------------------------------------------  */
+
+    /*  --------------------------------------  PROPERTIES  --------------------------------------------------------  */
+
+    /*  --------------------------------------  PUBLIC METHODS  ----------------------------------------------------  */
+
+    /*  --------------------------------------  PRIVATE FUNCTIONS  -------------------------------------------------  */
+
+
   }
 
   //List all Dates folders that the application currently has
@@ -50,16 +60,16 @@
     var _results = [];
     var _wholeFiles = [];
 
-    $this.listDatesFolders().forEach(function($$dateFolder){
+    $this.listDatesFolders().forEach(function($$dateFolder) {
       var _files = grunt.file.expand($$dateFolder + '/*.json');
       _wholeFiles = _wholeFiles.concat(_files);
     });
 
-    _wholeFiles.forEach(function($$file){
+    _wholeFiles.forEach(function($$file) {
       var _date = $$file.substr(_baseFolder.length).split('/')[1];
       var _serverName = $$file.substr(_baseFolder.length).split('/')[2].split('.')[0];
 
-      var _serverData = _results.first(function(x){ return x['name'] == _serverName; });
+      var _serverData = _results.first(function(x) { return x['name'] == _serverName; });
 
       //No server data yet? create it
       if(!_serverData) {
@@ -79,9 +89,9 @@
     });
 
     //Loop servers
-    _results.forEach(function($$server){
-      $$server['dates'].sort(function(a, b){
-        return (new Date(a)).getTime() - (new Date(b)).getTime();
+    _results.forEach(function($$server) {
+      $$server['dates'].sort(function(a, b) {
+        return (new Date(a['date'])).getTime() - (new Date(b['date'])).getTime();
       });
     });
 

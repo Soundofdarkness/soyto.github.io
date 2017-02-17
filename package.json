@@ -1,6 +1,6 @@
 {
   "name": "soyto.github.io",
-  "version": "0.16.1",
+  "version": "0.16.2",
   "description": "Listado con los rankings de todos los servidores",
   "main": "Gruntfile.js",
   "scripts": {
@@ -29,7 +29,7 @@
     "load-grunt-tasks": "^1.0.0",
     "marked": "^0.3.5",
     "moment": "^2.10.6",
-    "mongodb": "^2.2.24",
+    "mongoose": "^4.8.3",
     "object-to-xml": "^1.1.0",
     "q": "^1.4.1",
     "request": "^2.58.0",
