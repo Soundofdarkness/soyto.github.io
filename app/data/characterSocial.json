@@ -76,5 +76,14 @@
     "youtube": "https://www.youtube.com/channel/UCobfU0AmaA-rcplmzG3-qWA",
     "facebook": "https://www.facebook.com/tom.burkhardt.984",
     "twitch": "https://www.twitch.tv/wrong__way"
+  }},
+  {"serverName": "Thor", "characterID": 1902771 , "buttons": {
+    "twitch": "https://www.twitch.tv/zafr0"
+  }},
+  {"serverName": "Thor", "characterID": 886672 , "buttons": {
+    "youtube": "https://www.youtube.com/channel/UCsUWtHjH-O2TTC_L83oY42A"
+  }},
+  {"serverName": "Deyla", "characterID": 1187244 , "buttons": {
+    "facebook": "https://www.facebook.com/profile.php?id=100009844232650"
   }}
 ]

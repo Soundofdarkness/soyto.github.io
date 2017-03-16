@@ -34,6 +34,12 @@
       {'serverName': 'Hyperion', 'characterID': 11600}, //Raynee
       {'serverName': 'Antriksha', 'characterID': 863503}, //Nukey
       {'serverName': 'Antriksha', 'characterID': 642109}, //Yost
+      {'serverName': 'Hyperion', 'characterID': 783863}, //Siith
+      {'serverName': 'Hellion', 'characterID': 428540}, //Kerberos
+      {'serverName': 'Barus', 'characterID': 396287}, //Seyune
+      {'serverName': 'Barus', 'characterID': 916298}, //CiuCiuu,
+      {'serverName': 'Hyperion', 'characterID': 377330}, //Balonna,
+
     ];
 
     //Who asked to remove his old guild names
@@ -42,6 +48,10 @@
       {'serverName': 'Deyla', 'characterID': 1266763}, //Kaijur
       {'serverName': 'Hyperion', 'characterID': 11600}, //Raynee
       {'serverName': 'Antriksha', 'characterID': 863503}, //Nukey
+      {'serverName': 'Hyperion', 'characterID': 783863}, //Siith,
+      {'serverName': 'Hellion', 'characterID': 428540}, //Kerberos
+      {'serverName': 'Barus', 'characterID': 396287}, //Seyune
+      {'serverName': 'Barus', 'characterID': 916298}, //CiuCiuu
     ];
 
     //Wich servers
